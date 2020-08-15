@@ -34,7 +34,7 @@
 	 (sdl2:with-window (,win :title "Snake"  :w ,w :h ,h :flags '(:shown :opengl))
 	   (sdl2:with-gl-context (,gl-con ,win)
 	     (sdl2:gl-make-current ,win ,gl-con)
-	     (init-gl ,width ,height)
+	     (init-gl ,w ,h)
 	     (sdl2:with-event-loop (:method :poll)
 	       ,@body
 	       (:quit () t))))))))
