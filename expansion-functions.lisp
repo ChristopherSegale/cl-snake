@@ -25,8 +25,7 @@
        (with-game-loop ,win ,gl-context *screen-width* *screen-height*
 		       ,(quit-game quit-key)
 		       ,(set-direction direction move-keys)
-		       ,(game-logic win head body fruit direction previous-x previous-y fps)
-		       (:quit () t)))))
+		       ,(game-logic win head body fruit direction previous-x previous-y fps)))))
 
 (defmacro with-game-loop (win gl-con width height &body body)
   (with-gensyms (w h)
@@ -37,7 +36,8 @@
 	     (sdl2:gl-make-current ,win ,gl-con)
 	     (init-gl ,width ,height)
 	     (sdl2:with-event-loop (:method :poll)
-	       ,@body)))))))
+	       ,@body
+	       (:quit () t))))))))
 
 (defun init-gl (screen-width screen-height)
   (gl:matrix-mode :projection)
