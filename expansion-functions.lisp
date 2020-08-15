@@ -89,10 +89,10 @@
 	  (quit-when (out-of-bounds-p ,head))
 	  ,(fruit-intersect-expand head body fruit previous-x previous-y)
 	  (gl:clear :color-buffer)
-	  ,(draw-snake head body)
-	  ,(draw-fruit fruit)
-	  (sdl2:gl-swap-window ,win)
-	  ,(cap-framerate fps)))
+	  (with-fps-cap (,fps)
+	    ,(draw-snake head body)
+	    ,(draw-fruit fruit)
+	    (sdl2:gl-swap-window ,win))))
 
 (defun body-intersect-p (sq body)
   (when body
@@ -130,12 +130,13 @@
 (defun draw-fruit (fruit)
   `(draw-square ,fruit :red))
 
-(defun cap-framerate (frame-rate)
+(defmacro with-fps-cap ((frame-rate) &body body)
   (with-gensyms (st ct)
-    `(do ((,st (sdl2:get-ticks))
-	  (,ct (sdl2:get-ticks) (sdl2:get-ticks)))
-	 ((>= (- ,ct ,st) ,(/ 1000.0 frame-rate)))
-      nil)))
+    `(let ((,st (sdl2:get-ticks)))
+       ,@body
+       (do ((,ct (sdl2:get-ticks) (sdl2:get-ticks)))
+	   ((>= (- ,ct ,st) ,(/ 1000.0 frame-rate)))
+	 nil))))
 
 (defun expand-commands (commands)
   (let ((args (make-hash-table)))
