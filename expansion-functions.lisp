@@ -22,12 +22,12 @@
 	   ,body
 	   (,direction 'left)
 	   (,fruit (make-square (rand-list))))
-       (with-game-loop ,win ,gl-context *screen-width* *screen-height*
-		       ,(quit-game quit-key)
-		       ,(set-direction direction move-keys)
-		       ,(game-logic win head body fruit direction previous-x previous-y fps)))))
+       (with-game-loop (,win ,gl-context *screen-width* *screen-height*)
+	 ,(quit-game quit-key)
+	 ,(set-direction direction move-keys)
+	 ,(game-logic win head body fruit direction previous-x previous-y fps)))))
 
-(defmacro with-game-loop (win gl-con width height &body body)
+(defmacro with-game-loop ((win gl-con width height) &body body)
   (with-gensyms (w h)
     `(let ((,w ,width) (,h ,height))
        (sdl2:with-init (:video :timer)
