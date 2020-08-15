@@ -48,11 +48,14 @@
   (gl:matrix-mode :modelview)
   (gl:load-identity))
 
+(defmacro quit-when (predicate)
+  `(when ,predicate
+     (sdl2:push-event :quit)))
+
 (defun quit-game (quit-key)
   (with-gensyms (keysym)
     `(:keyup (:keysym ,keysym)
-	     (when (sdl2:scancode= (sdl2:scancode-value ,keysym) ,(get 'key quit-key))
-	       (sdl2:push-event :quit)))))
+	     (quit-when (sdl2:scancode= (sdl2:scancode-value ,keysym) ,(get 'key quit-key))))))
 
 (defun set-direction (d directions)
   (with-gensyms (keysym scancode)
@@ -81,11 +84,9 @@
 (defun game-logic (win head body fruit direction previous-x previous-y fps)
   `(:idle ()
 	  ,(move-snake head direction previous-x previous-y)
-	  (when (body-intersect-p ,head ,body)
-	    (sdl2:push-event :quit))
+	  (quit-when (body-intersect-p ,head ,body))
 	  ,(step-snake body previous-x previous-y)
-	  (when (out-of-bounds-p ,head)
-	    (sdl2:push-event :quit))
+	  (quit-when (out-of-bounds-p ,head))
 	  ,(fruit-intersect-expand head body fruit previous-x previous-y)
 	  (gl:clear :color-buffer)
 	  ,(draw-snake head body)
