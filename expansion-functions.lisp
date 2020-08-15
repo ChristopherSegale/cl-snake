@@ -77,8 +77,8 @@
 	 ,@(mapcar #'(lambda (d o v)
 		       `(,d (,o ,v ,(/ *tile* 2))))
 		   '(up down left right)
-		   '(decf incf decf incf)
-		   (list hy hy hx hx)))
+		   (alt 'decf 'incf)
+		   (rep hy hx)))
        (funcall ,head (list ,hx ,hy)))))
 
 (defun game-logic (win head body fruit direction previous-x previous-y fps)

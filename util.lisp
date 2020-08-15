@@ -23,3 +23,9 @@
 
 (defun rand-list ()
   (list (rand-coord :x) (rand-coord :y)))
+
+(defun alt (a b)
+  (list a b a b))
+
+(defun rep (a b)
+  (list a a b b))

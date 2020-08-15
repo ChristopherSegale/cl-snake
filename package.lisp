@@ -10,6 +10,8 @@
 
 (declaim
  (inline pos-or-neg
+	 alt
+	 rep
 	 get-color
 	 make-square
 	 draw-square
