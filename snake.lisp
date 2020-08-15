@@ -6,4 +6,4 @@
 (defun main ()
   (start-game (frame-rate 7)
 	      (quit-key esc)
-	      (move-keys (up down left right))))
+	      (move-keys up down left right)))

@@ -153,7 +153,7 @@
 		    (setf (gethash 'quit args) (cadr c))
 		    (rec (cdr commands)))
 		   (move-keys
-		    (setf (gethash 'move args) (cadr c))
+		    (setf (gethash 'move args) (cdr c))
 		    (rec (cdr commands)))))))
       (rec commands)
       (mapcar #'(lambda (k) (gethash k args)) '(quit move fps)))))
