@@ -21,7 +21,7 @@
     `(let ((,head (make-square '(,(/ *screen-width* 2) ,(/ *screen-height* 2))))
 	   ,body
 	   (,direction 'left)
-	   (,fruit (make-square (mapcar #'rand-coord '(:x :y)))))
+	   (,fruit (make-square (rand-list))))
        (with-game-loop ,win ,gl-context *screen-width* *screen-height*
 		       ,(quit-game quit-key)
 		       ,(set-direction direction move-keys)
@@ -107,14 +107,16 @@
        (setf ,body (butlast ,body)))))
 
 (defun fruit-intersect-expand (head body fruit previous-x previous-y)
-  (with-gensyms (h px py sq)
+  (with-gensyms (h px py)
     `(let ((,h ,head) (,px ,previous-x) (,py ,previous-y))
        (when (square-collide-p ,h ,fruit)
 	 (push (make-square (list ,px ,py)) ,body)
-	 (do ((,sq (make-square (rand-list)) (make-square (rand-list))))
-	     ((or (square-collide-p ,h ,sq) (body-intersect-p ,sq ,body)))
-	   nil)
-	 (funcall ,fruit (mapcar #'rand-coord '(:x :y)))))))
+	 (setf ,fruit (respawn-fruit ,h ,body))))))
+
+(defun respawn-fruit (head body)
+  (do ((sq (make-square (rand-list)) (make-square (rand-list))))
+      ((not (or (square-collide-p head sq) (body-intersect-p sq body))) sq)
+   nil))
 
 (defun draw-snake (head body)
   (with-gensyms (h rest b)

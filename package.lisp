@@ -15,4 +15,5 @@
 	 draw-square
 	 square-collide-p
 	 out-of-bounds-p
-	 body-intersect-p))
+	 body-intersect-p
+	 respawn-fruit))
