@@ -131,12 +131,12 @@
   `(draw-square ,fruit :red))
 
 (defmacro with-fps-cap ((frame-rate) &body body)
-  (with-gensyms (st ct)
-    `(let ((,st (sdl2:get-ticks)))
+  (with-gensyms (st ellapsed-time)
+    `(let ((,st (sdl2:get-ticks)) ,ellapsed-time)
        ,@body
-       (do ((,ct (sdl2:get-ticks) (sdl2:get-ticks)))
-	   ((>= (- ,ct ,st) ,(/ 1000.0 frame-rate)))
-	 nil))))
+       (setf ,ellapsed-time (- (sdl2:get-ticks) ,st))
+       (when (< ,ellapsed-time ,(/ 1000.0 frame-rate))
+	 (sdl2:delay (floor (- ,(/ 1000.0 frame-rate) ,ellapsed-time)))))))
 
 (defun expand-commands (commands)
   (let ((args (make-hash-table)))
