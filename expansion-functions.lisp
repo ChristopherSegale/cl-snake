@@ -31,7 +31,7 @@
   (with-gensyms (w h)
     `(let ((,w ,width) (,h ,height))
        (sdl2:with-init (:video :timer)
-	 (sdl2:with-window (,win :title "Snake"  :w ,w :h ,h :flags '(:shown :opengl))
+	 (sdl2:with-window (,win :title "Snake" :w ,w :h ,h :flags '(:shown :opengl))
 	   (sdl2:with-gl-context (,gl-con ,win)
 	     (sdl2:gl-make-current ,win ,gl-con)
 	     (init-gl ,w ,h)
