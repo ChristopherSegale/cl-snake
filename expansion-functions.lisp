@@ -69,18 +69,6 @@
 				 directions '(up down left right)))))
 	(error "need at least four directions."))))
 
-(defun move-snake (head direction previous-x previous-y)
-  (with-gensyms (hx hy)
-    `(destructuring-bind (,hx ,hy) (funcall ,head)
-       (setf ,previous-x ,hx ,previous-y ,hy)
-       (case ,direction
-	 ,@(mapcar #'(lambda (d o v)
-		       `(,d (,o ,v ,(/ *tile* 2))))
-		   '(up down left right)
-		   (alt 'decf 'incf)
-		   (rep hy hx)))
-       (funcall ,head (list ,hx ,hy)))))
-
 (defun game-logic (win head body fruit direction previous-x previous-y fps)
   `(:idle ()
 	  ,(move-snake head direction previous-x previous-y)
@@ -93,6 +81,18 @@
 	    ,(draw-snake head body)
 	    ,(draw-fruit fruit)
 	    (sdl2:gl-swap-window ,win))))
+
+(defun move-snake (head direction previous-x previous-y)
+  (with-gensyms (hx hy)
+    `(destructuring-bind (,hx ,hy) (funcall ,head)
+       (setf ,previous-x ,hx ,previous-y ,hy)
+       (case ,direction
+	 ,@(mapcar #'(lambda (d o v)
+		       `(,d (,o ,v ,(/ *tile* 2))))
+		   '(up down left right)
+		   (alt 'decf 'incf)
+		   (rep hy hx)))
+       (funcall ,head (list ,hx ,hy)))))
 
 (defun body-intersect-p (sq body)
   (when body
@@ -131,12 +131,18 @@
   `(draw-square ,fruit :red))
 
 (defmacro with-fps-cap ((frame-rate) &body body)
-  (with-gensyms (st ellapsed-time)
-    `(let ((,st (sdl2:get-ticks)) ,ellapsed-time)
+  (with-gensyms (ellapsed-time)
+    `(with-timer (,ellapsed-time)
        ,@body
-       (setf ,ellapsed-time (- (sdl2:get-ticks) ,st))
+       (end-timer)
        (when (< ,ellapsed-time ,(/ 1000.0 frame-rate))
 	 (sdl2:delay (floor (- ,(/ 1000.0 frame-rate) ,ellapsed-time)))))))
+
+(defmacro with-timer ((timer) &body body)
+  `(let ((,timer (sdl2:get-ticks)))
+     (flet ((end-timer ()
+	      (setf ,timer (- (sdl2:get-ticks) ,timer))))
+       ,@body)))
 
 (defun expand-commands (commands)
   (let ((args (make-hash-table)))
