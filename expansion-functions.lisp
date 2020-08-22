@@ -66,7 +66,11 @@
 		       ,@(mapcar #'(lambda (d1 d2)
 				     `((sdl2:scancode= ,scancode ,(get 'key `,d1))
 				       (setf ,d ',d2)))
-				 directions '(up down left right)))))
+				 directions '(up down left right))
+		       ,@(when (< 4 (length directions))
+			     (mapcar #'(lambda (k) `((sdl2:scancode= ,scancode ,(get 'key `,k))
+						     (sdl2:push-event :quit)))
+				     (nthcdr 4 directions))))))
 	(error "need at least four directions."))))
 
 (defun game-logic (win head body fruit direction previous-x previous-y fps)
@@ -152,14 +156,18 @@
 		   (frame-rate
 		    (if (integerp (cadr c))
 			(progn
-			  (setf (gethash 'fps args ) (cadr c))
+			  (setf (gethash 'fps args) (cadr c))
 			  (rec (cdr commands)))
 			(error "Framerate must be an integer.")))
 		   (quit-key
 		    (setf (gethash 'quit args) (cadr c))
+		    (when (nthcdr 2 c)
+			(setf (gethash 'move args) (nthcdr 2 c)))
 		    (rec (cdr commands)))
 		   (move-keys
-		    (setf (gethash 'move args) (cdr c))
+		    (if (gethash 'move args)
+			(setf (gethash 'move args) (append (cdr c) (gethash 'move args)))
+			(setf (gethash 'move args) (cdr c)))
 		    (rec (cdr commands)))))))
       (rec commands)
       (mapcar #'(lambda (k) (gethash k args)) '(quit move fps)))))
