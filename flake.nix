@@ -34,7 +34,6 @@
               ];
               src = pkgs.lib.cleanSource ./.;
               dontStrip = true;
-              LD_LIBRARY_PATH = "${nixpkgs.lib.strings.makeLibraryPath [ pkgs.SDL2 pkgs.libGL ]}";
               meta = {
                 license = pkgs.lib.licenses.mit;
               };
@@ -42,6 +41,7 @@
           };
           apps.default = {
             type = "app";
+            LD_LIBRARY_PATH = "${nixpkgs.lib.strings.makeLibraryPath [ pkgs.SDL2 pkgs.libGL ]}";
             program = "${self.packages.${system}.default}/bin/${name}";
           };
         });
