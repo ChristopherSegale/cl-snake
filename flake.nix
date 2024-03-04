@@ -17,32 +17,31 @@
         inherit (lispPackagesLite) lispDerivation;
         cl-opengl = clOpengl.packages.${system}.default;
         cl-sdl2 = clSDL2.packages.${system}.default;
+        buildInputs = with pkgs; [ coreutils SDL2 libGL ];
       in
         {
-          packages = {
+          packages = rec {
             # This is how you would create a derivation using SBCL (the default)
             default = lispDerivation {
               inherit name version;
               lispSystem = name;
-              buildInputs = with pkgs; [
-                SDL2
-                libGL
-              ];
+              buildInputs = buildInputs ++ [ pkgs.makeWrapper ];
+              propagatedBuildInputs = buildInputs;
               lispDependencies = [
                 cl-opengl
                 cl-sdl2
               ];
               src = pkgs.lib.cleanSource ./.;
               dontStrip = true;
+              postInstall = ''
+                              wrapProgram $out/bin/snake \
+                              --set PATH ${pkgs.lib.makeBinPath buildInputs} \
+                              --set LD_LIBRARY_PATH ${pkgs.lib.makeLibraryPath buildInputs}
+                            '';
               meta = {
                 license = pkgs.lib.licenses.mit;
               };
             };
-          };
-          apps.default = {
-            type = "app";
-            LD_LIBRARY_PATH = "${nixpkgs.lib.strings.makeLibraryPath [ pkgs.SDL2 pkgs.libGL ]}";
-            program = "${self.packages.${system}.default}/bin/${name}";
           };
         });
   }

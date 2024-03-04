@@ -9,5 +9,5 @@
 		 (:file "expansion-functions")
 		 (:file "snake"))
     :build-operation "program-op"
-    :build-pathname "bin/snake"
+    :build-pathname "bin/cl-snake"
     :entry-point "snake:main")
