@@ -20,13 +20,12 @@
         buildInputs = with pkgs; [ coreutils SDL2 libGL ];
       in
         {
-          packages = rec {
+          packages = {
             # This is how you would create a derivation using SBCL (the default)
             default = lispDerivation {
               inherit name version;
               lispSystem = name;
               buildInputs = buildInputs ++ [ pkgs.makeWrapper ];
-              propagatedBuildInputs = buildInputs;
               lispDependencies = [
                 cl-opengl
                 cl-sdl2
