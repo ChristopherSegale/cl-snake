@@ -1,4 +1,4 @@
-BIN=snake
+BIN=cl-snake
 LISP=sbcl
 BUNDLE=bundle
 LIBS=:sdl2 :cl-opengl

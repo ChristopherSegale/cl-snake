@@ -1,6 +1,7 @@
 (asdf:defsystem "snake"
     :author "Christopher Segale"
     :license "MIT"
+    :serial t
     :depends-on (:sdl2
 		 :cl-opengl)
     :components ((:file "package")
